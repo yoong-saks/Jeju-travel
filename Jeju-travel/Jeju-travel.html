@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>지박정오 탐라국 여행기</title>
+    <meta charset="utf-8" />
+    <!--사이드바 css-->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+
+    <!---->
+
+    <style>
+        .overlay_info {
+            border-radius: 6px;
+            margin-bottom: 12px;
+            float: left;
+            position: absolute;
+            border: 1px solid #ccc;
+            border-bottom: 2px solid #ddd;
+            background-color: #fff;
+            top: -100px;
+            left: -33px;
+        }
+
+        .overlay_info:nth-of-type(n) {
+            border: 0;
+            box-shadow: 0px 1px 2px #888;
+        }
+
+        .overlay_info a {
+            margin: 0;
+            display: block;
+            background: #d95050;
+            background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;
+            text-decoration: none;
+            color: #fff;
+            padding: 12px 36px 12px 14px;
+            font-size: 14px;
+            border-radius: 6px 6px 0 0
+        }
+
+        .overlay_info a strong {
+            padding-left: 10px;
+        }
+
+        .overlay_info .desc {
+            padding: 14px;
+            position: relative;
+            min-width: 215px;
+            height: 84px
+        }
+
+        .overlay_info .img-wrapper {
+            position: relative;
+            width: 56px;
+            height: 56px;
+        }
+
+        .overlay_info .img-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translate(50, 50);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            margin: auto;
+        }
+
+        .overlay_info .address {
+            font-size: 12px;
+            color: #333;
+            position: absolute;
+            left: 80px;
+            right: 14px;
+            top: 24px;
+            white-space: normal
+        }
+
+        .overlay_info:after {
+            content: '';
+            position: absolute;
+            margin-left: -11px;
+            left: 50%;
+            bottom: -12px;
+            width: 22px;
+            height: 12px;
+            background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png) no-repeat 0 bottom;
+        }
+
+        .customoverlay {
+            position: relative;
+            bottom: -19px;
+        }
+
+        .customoverlay a {
+            display: block;
+            text-decoration: none;
+            color: #0094F7;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        #map {
+            float: left;
+            left: 0px;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="curzr" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 32 32">
+            <path class="inner"
+                d="M25,30a5.82,5.82,0,0,1-1.09-.17l-.2-.07-7.36-3.48a.72.72,0,0,0-.35-.08.78.78,0,0,0-.33.07L8.24,29.54a.66.66,0,0,1-.2.06,5.17,5.17,0,0,1-1,.15,3.6,3.6,0,0,1-3.29-5L12.68,4.2a3.59,3.59,0,0,1,6.58,0l9,20.74A3.6,3.6,0,0,1,25,30Z"
+                fill="#F2F5F8" />
+            <path class="outer"
+                d="M16,3A2.59,2.59,0,0,1,18.34,4.6l9,20.74A2.59,2.59,0,0,1,25,29a5.42,5.42,0,0,1-.86-.15l-7.37-3.48a1.84,1.84,0,0,0-.77-.17,1.69,1.69,0,0,0-.73.16l-7.4,3.31a5.89,5.89,0,0,1-.79.12,2.59,2.59,0,0,1-2.37-3.62L13.6,4.6A2.58,2.58,0,0,1,16,3m0-2h0A4.58,4.58,0,0,0,11.76,3.8L2.84,24.33A4.58,4.58,0,0,0,7,30.75a6.08,6.08,0,0,0,1.21-.17,1.87,1.87,0,0,0,.4-.13L16,27.18l7.29,3.44a1.64,1.64,0,0,0,.39.14A6.37,6.37,0,0,0,25,31a4.59,4.59,0,0,0,4.21-6.41l-9-20.75A4.62,4.62,0,0,0,16,1Z"
+                fill="#111920" />
+        </svg>
+    </div>
+
+
+
+    <div id="mySection">
+        <div id="map" style="position: relative; z-index: 1;">
+            <nav style="position: absolute; z-index: 2;">
+                <div class="menu-btn">
+                    <div class="line line--1"></div>
+                    <div class="line line--2"></div>
+                    <div class="line line--3"></div>
+                </div>
+
+                <div class="nav-links">
+                    <div id="menu_wrap" class="bg_white">
+                        <div class="option">
+                            <div>
+                                <form onsubmit="searchPlaces(); return false;">
+                                    키워드 : <input type="text" id="keyword" size="15">
+                                    <button type="submit">검색하기</button>
+                                    <button type="button" id="button1" onclick="button1_click();">마커 지우기</button>
+                                </form>
+                            </div>
+                        </div>
+                        <hr>
+                        <ul id="placesList"></ul>
+                        <div id="pagination"></div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="switch_bgc">
+                <fieldset>
+                    <label>
+                        <input role="switch" type="checkbox" id="photoMenu" />
+                        <span>포토존</span>
+                    </label>
+
+                    <label>
+                        <input role="switch" type="checkbox" id="restaurantMenu" />
+                        <span>식당</span>
+                    </label>
+
+                    <label>
+                        <input role="switch" type="checkbox" id="cafeMenu" />
+                        <span>카페</span>
+                    </label>
+                </fieldset>
+            </div>
+            <div class="loc-btn" onclick="panTo()"><img src="./house-solid.png"
+                    style="position:absolute; top:6px; left:6px;" width="22" height="20" alt=""></div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=###api_key###"></script>
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=###api_key###"></script>
+    <script>
+        class ArrowPointer {
+            constructor() {
+                this.root = document.body
+                this.cursor = document.querySelector(".curzr")
+
+                this.position = {
+                    distanceX: 0,
+                    distanceY: 0,
+                    distance: 0,
+                    pointerX: 0,
+                    pointerY: 0,
+                },
+                    this.previousPointerX = 0
+                this.previousPointerY = 0
+                this.angle = 0
+                this.previousAngle = 0
+                this.angleDisplace = 0
+                this.degrees = 57.296
+                this.cursorSize = 20
+
+                this.cursorStyle = {
+                    boxSizing: 'border-box',
+                    position: 'fixed',
+                    top: '0px',
+                    left: `${-this.cursorSize / 2}px`,
+                    zIndex: '2147483647',
+                    width: `${this.cursorSize}px`,
+                    height: `${this.cursorSize}px`,
+                    transition: '250ms, transform 100ms',
+                    userSelect: 'none',
+                    pointerEvents: 'none'
+                }
+
+                this.init(this.cursor, this.cursorStyle)
+            }
+
+            init(el, style) {
+                Object.assign(el.style, style)
+                this.cursor.removeAttribute("hidden")
+
+                document.body.style.cursor = 'none'
+                document.body.querySelectorAll("button, label, input, textarea, select, a").forEach((el) => {
+                    el.style.cursor = 'inherit'
+                })
+            }
+
+            move(event) {
+                this.previousPointerX = this.position.pointerX
+                this.previousPointerY = this.position.pointerY
+                this.position.pointerX = event.pageX + this.root.getBoundingClientRect().x
+                this.position.pointerY = event.pageY + this.root.getBoundingClientRect().y
+                this.position.distanceX = this.previousPointerX - this.position.pointerX
+                this.position.distanceY = this.previousPointerY - this.position.pointerY
+                this.distance = Math.sqrt(this.position.distanceY ** 2 + this.position.distanceX ** 2)
+
+                this.cursor.style.transform = `translate3d(${this.position.pointerX}px, ${this.position.pointerY}px, 0)`
+
+                if (this.distance > 1) {
+                    this.rotate(this.position)
+                } else {
+                    this.cursor.style.transform += ` rotate(${this.angleDisplace}deg)`
+                }
+            }
+
+            rotate(position) {
+                let unsortedAngle = Math.atan(Math.abs(position.distanceY) / Math.abs(position.distanceX)) * this.degrees
+                let modAngle
+                const style = this.cursor.style
+                this.previousAngle = this.angle
+
+                if (position.distanceX <= 0 && position.distanceY >= 0) {
+                    this.angle = 90 - unsortedAngle + 0
+                } else if (position.distanceX < 0 && position.distanceY < 0) {
+                    this.angle = unsortedAngle + 90
+                } else if (position.distanceX >= 0 && position.distanceY <= 0) {
+                    this.angle = 90 - unsortedAngle + 180
+                } else if (position.distanceX > 0 && position.distanceY > 0) {
+                    this.angle = unsortedAngle + 270
+                }
+
+                if (isNaN(this.angle)) {
+                    this.angle = this.previousAngle
+                } else {
+                    if (this.angle - this.previousAngle <= -270) {
+                        this.angleDisplace += 360 + this.angle - this.previousAngle
+                    } else if (this.angle - this.previousAngle >= 270) {
+                        this.angleDisplace += this.angle - this.previousAngle - 360
+                    } else {
+                        this.angleDisplace += this.angle - this.previousAngle
+                    }
+                }
+                style.transform += ` rotate(${this.angleDisplace}deg)`
+
+                setTimeout(() => {
+                    modAngle = this.angleDisplace >= 0 ? this.angleDisplace % 360 : 360 + this.angleDisplace % 360
+                    if (modAngle >= 45 && modAngle < 135) {
+                        style.left = `${-this.cursorSize}px`
+                        style.top = `${-this.cursorSize / 2}px`
+                    } else if (modAngle >= 135 && modAngle < 225) {
+                        style.left = `${-this.cursorSize / 2}px`
+                        style.top = `${-this.cursorSize}px`
+                    } else if (modAngle >= 225 && modAngle < 315) {
+                        style.left = '0px'
+                        style.top = `${-this.cursorSize / 2}px`
+                    } else {
+                        style.left = `${-this.cursorSize / 2}px`
+                        style.top = '0px'
+                    }
+                }, 0)
+            }
+
+            remove() {
+                this.cursor.remove()
+            }
+        }
+
+        (() => {
+            const cursor = new ArrowPointer()
+            if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                document.onmousemove = function (event) {
+                    cursor.move(event)
+                }
+            } else {
+                cursor.remove()
+            }
+        })() 
+    </script>
+
+
+    <script>
+        var container = document.getElementById('map');
+        var options = {
+            center: new kakao.maps.LatLng(33.44863045987452, 126.36592355588677),
+            level: 7
+        };
+
+        var map = new kakao.maps.Map(container, options);
+
+        // 포토존 마커의 위치 좌표 배열
+        var photoPositions = [
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>노형수퍼마켙</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F5A0B06EB3B9F4685AD6B94E160A33888" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.4648493124671, 126.45537700368062)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>사진 놀이터</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_653978658" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.45674853867375, 126.44170555102188)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>오설록 티 뮤지엄</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F92bfbd617b6fc2b96aa8e3ec000dcf1380195b4f%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.30594381340365, 126.28938811612187)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>소소한담</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F795832EEFFD74A339BF0858D4A217A4C" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.47147980557702, 126.36697014085372)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>베니르 모텔</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Ffiy_reboot%2Fplace%2F790580B0952645F7B96F38E7C5DFDCF9" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.462937863248754, 126.30924678531646)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>금능 해수욕장</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fcfile%2F2503764353EC7A4F13" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.39043927998136, 126.23587870055054)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>성이시돌목장</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F0b125dd4b69d6f78fe2a20f3e10893b80a433df7%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.34767121586583, 126.32724985965018)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>제주도립김창열미술관</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F230b4dd07a218950b9991a56288a1f19cd6ddd2d%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.33906291641296, 126.26859230469313)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-camera fa-lg"></i><strong>신창풍차해안</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FFBB8290809B44271B6BAB07B5901D226" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.345336443754896, 126.17754812089137)
+            }
+        ];
+
+
+        // 맛집 마커의 위치 좌표 배열
+        var restaurantPositions = [
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>인디안 썸머</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fef2d838e9b84f031edea8ce5aeb7e8c18c449c6f%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46333361716225, 126.3151706496891)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>파라토도스</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F869CEC9AEA894C1FA334B5B60CCC70D3" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.389288064615336, 126.23231788079494)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>잇수다</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fc1e6fe5b1881eedfbd7124c55333b5f378790fa0%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46695050426945, 126.33743396017947)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>잇칸시타</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2F65BCE16AD3AD4741BAD46892B9F94F0F" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.47708867729688, 126.37026450603014)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>라신비</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F880ecbfd017ef495e8047b69d7ec9e5d285a12ea%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.437818897283336, 126.27553159058411)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>애월튀김간</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F137C087556F643D3BB8AEEFED8E98AB5" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46439834953949, 126.3198307922254)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>숙성도 애월점</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fbc79a001810ef393b169b7dee0498676b26c94f3%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46349873800313, 126.30958655516667)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>제주 송림반점</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Ffiy_reboot%2Fplace%2FA763805DF382466C9A79D28222458610" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.512431042077594, 126.5197513733645)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-utensils fa-lg"></i><strong>만지식당</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2F06A1A518A79245639D6793639A8E1C31" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46328975488952, 126.33906458017293)
+            }
+        ];
+
+        // 카페 마커의 위치 좌표 배열
+        var cafePositions = [
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i></i><strong>인디고인디드</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F4256C0EF592340A89DDB46DE3A91FF5B" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46641853698385, 126.33406293212552)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i><strong>마틸다</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F49262cd2ef84a61dced27af69ff938b9857b9314%3Foriginal" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.465689366186474, 126.33427020450823)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i><strong>카페 원웨이</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1502283331" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.36251468875132, 126.19311614712667)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i><strong>컴컴제주</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F53EFC39CB1ED4DCDAF4FA24CA188F436" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.40137774818715, 126.25102788170233)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i><strong>7밀리그램</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Fmystore%2F889D7B011CCD432B809D9DA1E35C7963" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.3743866070573, 126.28352090973279)
+            },
+            {
+                content: '<div class="overlay_info">' +
+                    '    <a><i class="fas fa-coffee fa-lg"></i><strong>로우하이카페</strong></a>' +
+                    '    <div class="desc">' +
+                    '        <div class= "img-wrapper"><img src="https://img1.kakaocdn.net/cthumb/local/R0x420/?fname=http%3A%2F%2Ft1.kakaocdn.net%2Ffiy_reboot%2Fplace%2F52165D531F334DE6A8A2F4AD2DA90C7B" alt=""></div>' +
+                    '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+                    '    </div>' +
+                    '</div>',
+                latlng: new kakao.maps.LatLng(33.46335936690789, 126.33901564609205)
+            }
+        ];
+
+        var photomarkerImageSrc = './sangmark.png',         // 포토존 마커
+            restaurantmarkerImageSrc = './sangmark2.png',   // 맛집 마커
+            cafemarkerImageSrc = './sangmark3.png';         // 카페 마커
+            photoMarkers = [],          // 포토존 마커 객체를 가지고 있을 배열
+            restaurantMarkers = [],     // 맛집 마커 객체를 가지고 있을 배열
+            cafeMarkers = [];           // 카페 마커 객체를 가지고 있을 배열
+
+        createPhotoMarkers();           // 포토존 마커를 배열에 추가
+        createRestaurantMarkers();      // 맛집 마커를 배열에 추가
+        createCafeMarkers();            // 카페 마커를 배열에 추가
+
+
+        // 이미지를 받아와서 마커이미지를 생성하는 함수
+        function createMarkerImage(src, size, options) {
+            var markerImage = new kakao.maps.MarkerImage(src, size, options);
+            return markerImage;
+        }
+
+        // 좌표와 마커이미지를 받아 마커를 생성하는 함수
+        function createMarker(position, image) {
+            var marker = new kakao.maps.Marker({
+                position: position,
+                image: image
+            });
+
+            return marker;
+        }
+        // 포토존 마커를 생성하고 배열에 추가하는 함수
+        function createPhotoMarkers() {
+
+            for (var i = 0; i < photoPositions.length; i++) {
+
+                var imageSize = new kakao.maps.Size(36, 36),
+                    imageOptions = {
+                        spriteOrigin: new kakao.maps.Point(0, 0),
+
+                    };
+
+                // 마커이미지와 마커를 생성
+                var markerImage = createMarkerImage(photomarkerImageSrc, imageSize, imageOptions),
+                    marker = createMarker(photoPositions[i].latlng, markerImage);
+
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: photoPositions[i].content // 인포윈도우에 표시할 내용
+                });
+
+                kakao.maps.event.addListener(marker, 'click', (function (i) {
+                    return function () {
+                        var urlformark = [
+                            'https://place.map.kakao.com/1209632068',
+                            'http://www.jejuppg.com/',
+                            'https://map.naver.com/v5/entry/place/11612628?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://www.instagram.com/sosohandam_/',
+                            'https://place.map.kakao.com/1912018237',
+                            'https://www.visitjeju.net/kr/detail/view?contentsid=CONT_000000000500079',
+                            'https://place.map.kakao.com/11131088',
+                            'https://kimtschang-yeul.jeju.go.kr/',
+                            'https://www.instagram.com/explore/tags/%EC%8B%A0%EC%B0%BD%ED%92%8D%EC%B0%A8%ED%95%B4%EC%95%88%EB%8F%84%EB%A1%9C/'
+                        ]
+                        window.open(urlformark[i]);
+                    };
+                })(i));
+
+
+                kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+                kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+                photoMarkers.push(marker);
+            }
+        }
+
+        function setPhotoMarkers(map) {
+            for (var i = 0; i < photoMarkers.length; i++) {
+                photoMarkers[i].setMap(map);
+            }
+        }
+
+        // 맛집 마커를 생성하고 배열에 추가하는 함수
+        function createRestaurantMarkers() {
+            for (var i = 0; i < restaurantPositions.length; i++) {
+
+                var imageSize = new kakao.maps.Size(36, 36),
+                    imageOptions = {
+                        spriteOrigin: new kakao.maps.Point(0, 0),
+
+                    };
+
+                // 마커이미지와 마커를 생성
+                var markerImage = createMarkerImage(restaurantmarkerImageSrc, imageSize, imageOptions),
+                    marker = createMarker(restaurantPositions[i].latlng, markerImage);
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: restaurantPositions[i].content // 인포윈도우에 표시할 내용
+                });
+
+                kakao.maps.event.addListener(marker, 'click', (function (i) {
+                    return function () {
+                        var urlformark = [
+                            'https://map.naver.com/v5/search/%EC%A0%9C%EC%A3%BC%20%EC%9D%B8%EB%94%94%EC%95%88%EC%8D%B8%EB%A8%B8/place/1913657793?placePath=%3Fentry=pll%26from=nx%26fromNxList=true&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1554789738?placePath=%2Fhome&entry=plt&c=15.05,0,0,0,dh',
+                            'https://map.naver.com/v5/search/%EC%A0%9C%EC%A3%BC%20%EC%9E%87%EC%88%98%EB%8B%A4/place/36481031?placePath=%3Fentry=pll%26from=nx%26fromNxList=true&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1074627571?placePath=%2Fhome&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/474937108?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/32465723?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1061107759?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/16723181?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1943823845?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh'
+                        ]
+                        window.open(urlformark[i]);
+                    };
+                })(i));
+
+                kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+                kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+                restaurantMarkers.push(marker);
+            }
+        }
+        function setRestaurantMarkers(map) {
+            for (var i = 0; i < restaurantMarkers.length; i++) {
+                restaurantMarkers[i].setMap(map);
+            }
+        }
+
+        // 카페 마커를 생성하고 배열에 추가하는 함수
+        function createCafeMarkers() {
+            for (var i = 0; i < cafePositions.length; i++) {
+
+                var imageSize = new kakao.maps.Size(36, 36),
+                    imageOptions = {
+                        spriteOrigin: new kakao.maps.Point(0, 0),
+
+                    };
+
+                // 마커이미지와 마커를 생성
+                var markerImage = createMarkerImage(cafemarkerImageSrc, imageSize, imageOptions),
+                    marker = createMarker(cafePositions[i].latlng, markerImage);
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: cafePositions[i].content // 인포윈도우에 표시할 내용
+                });
+
+                kakao.maps.event.addListener(marker, 'click', (function (i) {
+                    return function () {
+                        var urlformark = [
+                            'https://map.naver.com/v5/entry/place/36744970?entry=plt&c=14.94,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/36543262?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1344903580?placePath=%2Fhome&entry=plt&c=14.66,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1411180003?placePath=%2Fhome&entry=plt&c=15,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1479613419?placePath=%2Fhome&entry=plt&c=10.62,0,0,0,dh',
+                            'https://map.naver.com/v5/entry/place/1067635218?placePath=%2Fhome&c=15.06,0,0,0,dh'
+                        ]
+                        window.open(urlformark[i]);
+                    };
+                })(i));
+
+                kakao.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+                kakao.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+                cafeMarkers.push(marker);
+            }
+        }
+        function setCafeMarkers(map) {
+            for (var i = 0; i < cafeMarkers.length; i++) {
+                cafeMarkers[i].setMap(map);
+            }
+        }
+
+        // 인포 메시지를 띄우는 함수
+        function makeOverListener(map, marker, infowindow) {
+            return function () {
+                infowindow.open(map, marker);
+            };
+        }
+
+        // 인포 메시지를 닫는 함수
+        function makeOutListener(infowindow) {
+            return function () {
+                infowindow.close();
+            };
+        }
+
+
+        //토글 스위치 클릭시 변동되는 마커
+        var photoMenu = document.getElementById('photoMenu');
+        var restaurantMenu = document.getElementById('restaurantMenu');
+        var cafeMenu = document.getElementById('cafeMenu');
+
+        photoMenu.addEventListener('click', () => {
+            if (photoMenu.className === '') {
+                photoMenu.className = 'menu_selected';
+                setPhotoMarkers(map);
+            }
+            else if (photoMenu.className === 'menu_selected') {
+                photoMenu.className = '';
+                setPhotoMarkers(null);
+            }
+        })
+
+        restaurantMenu.addEventListener('click', () => {
+            if (restaurantMenu.className === '') {
+                restaurantMenu.className = 'menu_selected';
+                setRestaurantMarkers(map);
+            }
+            else if (restaurantMenu.className === 'menu_selected') {
+                restaurantMenu.className = '';
+                setRestaurantMarkers(null);
+            }
+        })
+
+        cafeMenu.addEventListener('click', () => {
+            if (cafeMenu.className === '') {
+                cafeMenu.className = 'menu_selected';
+                setCafeMarkers(map);
+            }
+            else if (cafeMenu.className === 'menu_selected') {
+                cafeMenu.className = '';
+                setCafeMarkers(null);
+            }
+        })
+
+
+
+        var home_imageSrc = './house-solid.png', // 숙소 이미지
+            home_imageSize = new kakao.maps.Size(22, 22), // 마커 크기
+            home_imageOption = { offset: new kakao.maps.Point(11, 22) }; // 마커 옵션
+
+        // 숙소 마커이미지를 생성
+        var home_markerImage = new kakao.maps.MarkerImage(home_imageSrc, home_imageSize, home_imageOption),
+            home_markerPosition = new kakao.maps.LatLng(33.44863045987452, 126.36592355588677);
+        var home_marker = new kakao.maps.Marker({
+            position: home_markerPosition,
+            image: home_markerImage
+        });
+
+
+        // 인포 메시지
+        var home_iwContent = '<div class="overlay_info">' +
+            '    <a><i class="fas fa-home fa-lg"></i><strong>우리 숙소</strong></a>' +
+            '    <div class="desc">' +
+            '        <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/place_thumb.png" alt="">' +
+            '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>' +
+            '    </div>' +
+            '</div>' 
+
+        var infowindow = new kakao.maps.InfoWindow({
+            content: home_iwContent
+        });
+
+        kakao.maps.event.addListener(home_marker, 'mouseover', function () {
+            infowindow.open(map, home_marker);
+        });
+
+        kakao.maps.event.addListener(home_marker, 'mouseout', function () {
+            infowindow.close();
+        });
+
+        // 커스텀 오버레이
+        var home_content = '<div class="customoverlay">' +
+            '  <a href="https://map.kakao.com/?itemId=1265482658" target="_blank">' +
+            '    <span class="title">숙소</span>' +
+            '  </a>' +
+            '</div>';
+
+        var customOverlay = new kakao.maps.CustomOverlay({
+            map: map,
+            position: home_markerPosition,
+            content: home_content,
+            yAnchor: 1
+        });
+
+        kakao.maps.event.addListener(home_marker, 'click', function () {
+            window.open('https://map.kakao.com/?itemId=1265482658');
+        });
+
+        home_marker.setMap(map);
+
+        function panTo() {
+            var moveLatLon = new kakao.maps.LatLng(33.44863045987452, 126.36592355588677);
+            map.panTo(moveLatLon);
+        }
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>//******************************검색창 스크립트************************************
+        var markers = [];
+
+        var ps = new kakao.maps.services.Places();
+
+        var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+        searchPlaces();
+        function searchPlaces() {
+
+            var keyword = document.getElementById('keyword').value;
+
+            ps.keywordSearch(keyword, placesSearchCB);
+        }
+
+        // 장소검색이 완료됐을 때 호출되는 콜백함수
+        function placesSearchCB(data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+
+                // 정상적으로 검색이 완료됐으면
+                // 검색 목록과 마커를 표출
+                displayPlaces(data);
+
+                // 페이지 번호를 표출
+                displayPagination(pagination);
+
+            } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+                alert('검색 결과가 존재하지 않습니다.');
+                return;
+
+            } else if (status === kakao.maps.services.Status.ERROR) {
+
+                alert('검색 결과 중 오류가 발생했습니다.');
+                return;
+
+            }
+        }
+
+        // 검색 결과 목록과 마커를 표출하는 함수
+        function displayPlaces(places) {
+
+            var listEl = document.getElementById('placesList'),
+                menuEl = document.getElementById('menu_wrap'),
+                fragment = document.createDocumentFragment(),
+                bounds = new kakao.maps.LatLngBounds(),
+                listStr = '';
+
+            // 검색 결과 목록에 추가된 항목들을 제거
+            removeAllChildNods(listEl);
+
+            // 지도에 표시되고 있는 마커를 제거
+            removeMarker();
+
+            for (var i = 0; i < places.length; i++) {
+
+                // 마커를 생성하고 지도에 표시
+                var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+                    marker = addMarker(placePosition, i),
+                    itemEl = getListItem(i, places[i]);
+                bounds.extend(placePosition);
+
+                (function (marker, title) {
+                    kakao.maps.event.addListener(marker, 'mouseover', function () {
+                        displayInfowindow(marker, title);
+                    });
+
+                    kakao.maps.event.addListener(marker, 'mouseout', function () {
+                        infowindow.close();
+                    });
+
+                    itemEl.onmouseover = function () {
+                        displayInfowindow(marker, title);
+                    };
+
+                    itemEl.onmouseout = function () {
+                        infowindow.close();
+                    };
+                })(marker, places[i].place_name);
+
+                fragment.appendChild(itemEl);
+            }
+
+
+            listEl.appendChild(fragment);
+            menuEl.scrollTop = 0;
+
+            map.setBounds(bounds);
+
+
+        }
+
+        function getListItem(index, places) {
+
+            var el = document.createElement('li'),
+                itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+                    '<div class="info">' +
+                    '   <h5>' + places.place_name + '</h5>';
+
+            if (places.road_address_name) {
+                itemStr += '    <span>' + places.road_address_name + '</span>' +
+                    '   <span class="jibun gray">' + places.address_name + '</span>';
+            } else {
+                itemStr += '    <span>' + places.address_name + '</span>';
+            }
+
+            itemStr += '  <span class="tel">' + places.phone + '</span>' +
+                '</div>';
+
+            el.innerHTML = itemStr;
+            el.className = 'item';
+
+            return el;
+        }
+
+        function addMarker(position, idx, title) {
+            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', 
+                imageSize = new kakao.maps.Size(36, 37), 
+                imgOptions = {
+                    spriteSize: new kakao.maps.Size(36, 691), 
+                    spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), 
+                    offset: new kakao.maps.Point(13, 37) 
+                },
+                markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+                marker = new kakao.maps.Marker({
+                    position: position, 
+                    image: markerImage
+                });
+
+            marker.setMap(map); 
+            markers.push(marker); 
+
+            return marker;
+        }
+
+        // 지도 위에 표시되고 있는 마커를 모두 제거
+        function removeMarker() {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+        }
+
+        // 검색결과 목록 하단에 페이지번호를 표시는 함수
+        function displayPagination(pagination) {
+            var paginationEl = document.getElementById('pagination'),
+                fragment = document.createDocumentFragment(),
+                i;
+
+            // 기존에 추가된 페이지번호를 삭제
+            while (paginationEl.hasChildNodes()) {
+                paginationEl.removeChild(paginationEl.lastChild);
+            }
+
+            for (i = 1; i <= pagination.last; i++) {
+                var el = document.createElement('a');
+                el.href = "#";
+                el.innerHTML = i;
+
+                if (i === pagination.current) {
+                    el.className = 'on';
+                } else {
+                    el.onclick = (function (i) {
+                        return function () {
+                            pagination.gotoPage(i);
+                        }
+                    })(i);
+                }
+
+                fragment.appendChild(el);
+            }
+            paginationEl.appendChild(fragment);
+        }
+
+        function displayInfowindow(marker, title) {
+            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+
+        function removeAllChildNods(el) {
+            while (el.hasChildNodes()) {
+                el.removeChild(el.lastChild);
+            }
+        }
+
+        function button1_click() {
+            var listEl = document.getElementById('placesList');
+            var paginationEl = document.getElementById('pagination');
+            removeAllChildNods(listEl);
+            removeMarker();
+            while (paginationEl.hasChildNodes()) {
+                paginationEl.removeChild(paginationEl.lastChild);
+            };
+
+        }
+
+
+    </script>
+
+    <script src="./sidebar.js"></script>
+</body>
+
+</html>
